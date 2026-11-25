@@ -12,12 +12,21 @@ ENTRY = 'We spent forty minutes in a meeting deciding what the meeting was about
 
 OUTPUT_PATH = "/output/entry.txt"
 
+MIN_CHARS = 1
+MAX_CHARS = 200
+
+
+def validate_entry(text):
+    """Check the entry against the bounty gate: 1-200 chars, single line."""
+    assert text and not text.isspace(), "entry must not be empty"
+    assert text == text.strip(), "entry must not have leading/trailing whitespace"
+    assert MIN_CHARS <= len(text) <= MAX_CHARS, "entry length out of range"
+    assert "\n" not in text, "entry must be a single line"
+    return text
+
 
 def main():
-    # Guard: never submit a blank entry to the sealed gate.
-    assert ENTRY and not ENTRY.isspace(), "entry must not be empty"
-    assert len(ENTRY) <= 200, "entry exceeds 200 characters"
-    assert "\n" not in ENTRY, "entry must be a single line"
+    validate_entry(ENTRY)
     os.makedirs("/output", exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         f.write(ENTRY)
